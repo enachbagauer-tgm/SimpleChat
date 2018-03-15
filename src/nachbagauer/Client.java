@@ -34,10 +34,13 @@ public class Client {
         JButton button_SendMessage;
         JTextField textField_Username;
         JScrollPane scrollPane_Messages;
+
        
         Socket client;
         PrintWriter writer;
         BufferedReader reader;
+        
+        
        
         public static void main(String[] args) {
                 Client c = new Client();
@@ -61,6 +64,8 @@ public class Client {
                 button_SendMessage.addActionListener(new SendButtonListener());
                
                 textField_Username = new JTextField(10);
+                textField_Username.setText(JOptionPane.showInputDialog("Name"));
+                textField_Username.disable();
                
                 // Scrollbalken zur textArea hinzufügen
                 scrollPane_Messages = new JScrollPane(textArea_Messages);
@@ -91,7 +96,8 @@ public class Client {
        
         public boolean connectToServer() {
                 try {
-                        client = new Socket(JOptionPane.showInputDialog("Bitte IP adresse eingeben"), 5555);
+                        client = new Socket(JOptionPane.showInputDialog("Bitte IP adresse eingeben"), 5050);
+                        
                         reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
                         writer = new PrintWriter(client.getOutputStream());
                         appendTextMessages("Netzwerkverbindung hergestellt");
@@ -106,6 +112,18 @@ public class Client {
         }
        
         public void sendMessageToServer() {
+        		if (textField_ClientMessage.getText().startsWith("/")) {
+        			if (textField_ClientMessage.getText().equals("/ls")) {
+        				writer.println("ls");
+        			}
+        			if (textField_ClientMessage.getText().equals("/exit")) {
+        				writer.println("exit");
+        			}
+        			if (textField_ClientMessage.getText().equals("/close")) {
+        				writer.println("close");
+        			}
+        		}
+        	
                 writer.println(textField_Username.getText() + ": " + textField_ClientMessage.getText());
                 writer.flush();
                
